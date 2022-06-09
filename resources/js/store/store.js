@@ -7,6 +7,7 @@ const store = new Vuex.Store({
     state: {
         url: "http://127.0.0.1:8000/",
         token: localStorage.getItem("auth") || "",
+        auth: {},
     },
     mutations: {
         setToken(state, token) {
@@ -17,6 +18,7 @@ const store = new Vuex.Store({
         clearToken(state) {
             localStorage.removeItem("auth");
             state.token = "";
+            state.auth = "";
         },
 
         checkAuth(state) {
@@ -24,15 +26,17 @@ const store = new Vuex.Store({
                 axios
                     .post(state.url + "api/auth/me", { token: state.token })
                     .then((res) => {
-                        console.log("auth");
+                        state.auth = res.data;
                     })
                     .catch((err) => {
                         this.commit("clearToken");
                         router.push({ name: "login" });
+                        state.auth = "";
                     });
             } else {
                 router.push({ name: "login" });
                 this.commit("clearToken");
+                state.auth = "";
             }
         },
 
@@ -48,7 +52,6 @@ const store = new Vuex.Store({
                         router.push({ name: "login" });
                     });
             } else {
-                router.push({ name: "login" });
                 this.commit("clearToken");
             }
         },

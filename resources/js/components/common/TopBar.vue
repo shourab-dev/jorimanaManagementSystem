@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <div
+        v-if="this.$route.path == '/' || this.$route.path == '/register' ? false : true"
+    >
         <!-- TopBar -->
         <nav
             class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top"
@@ -63,12 +65,13 @@
                     >
                         <img
                             class="img-profile rounded-circle"
-                            src="https://ui-avatars.com/api/?background=fff&color=000&font-size=0.6&name=abul+faisal"
+                            :src="avatar"
                             style="max-width: 60px"
                         />
-                        <span class="ml-2 d-none d-lg-inline text-white small"
-                            >Maman Ketoprak</span
-                        >
+                        <span
+                            class="ml-2 d-none d-lg-inline text-white small text-capitalize"
+                            >{{ userName }}
+                        </span>
                     </a>
                     <div
                         class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -113,7 +116,26 @@
 </template>
 
 <script>
-export default {};
+export default {
+    props: ["userName"],
+    data() {
+        return {
+            authName: this.userName,
+
+            avatar:
+                "https://ui-avatars.com/api/?background=fff&color=000&font-size=0.6&name=" +
+                this.userName,
+        };
+    },
+    watch: {
+        userName: function () {
+            this.authName = this.userName;
+            this.avatar =
+                "https://ui-avatars.com/api/?background=fff&color=000&font-size=0.6&name=" +
+                this.userName;
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -7,7 +7,7 @@
             <!-- Sidebar -->
             <div id="content-wrapper" class="d-flex flex-column">
                 <div id="content">
-                    <TopBar />
+                    <TopBar :userName="$store.state.auth.name"> </TopBar>
 
                     <!-- Container Fluid-->
                     <div class="container-fluid" id="container-wrapper">
@@ -48,12 +48,13 @@
                                     <div class="modal-footer">
                                         <button
                                             type="button"
-                                            class="btn btn-outline-primary"
+                                            class="btn btn-outline-primary dismissButton"
                                             data-dismiss="modal"
                                         >
                                             Cancel
                                         </button>
                                         <a
+                                            @click.prevent="logout"
                                             href="login.html"
                                             class="btn btn-primary"
                                             >Logout</a
@@ -77,6 +78,18 @@ export default {
     components: {
         Navbar,
         TopBar,
+    },
+    methods: {
+        logout() {
+            $(".dismissButton").click();
+
+            this.$store.commit("clearToken");
+            this.$router.push({ name: "login" });
+            Toast.fire({
+                icon: "success",
+                title: "Logout Successfull",
+            });
+        },
     },
 };
 </script>

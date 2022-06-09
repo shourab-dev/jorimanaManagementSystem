@@ -104,6 +104,10 @@ export default {
             },
         };
     },
+    // MOUNTED
+    mounted() {
+        this.$store.commit("redirectHome");
+    },
 
     // METHODS
     methods: {

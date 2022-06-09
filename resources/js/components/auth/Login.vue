@@ -58,8 +58,8 @@
                                             <router-link
                                                 class="font-weight-bold small"
                                                 :to="{ name: 'register' }"
-                                                >Create an Account!</router-link
-                                            >
+                                                >Create an Account!
+                                            </router-link>
                                         </div>
                                         <div class="text-center"></div>
                                     </div>
@@ -110,6 +110,7 @@ export default {
                             title: "Login Successfull",
                         });
                         this.$store.commit("setToken", res.data.access_token);
+
                         this.$router.push({ name: "dashboard" });
                     })
                     .catch((err) => {

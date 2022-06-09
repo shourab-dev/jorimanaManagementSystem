@@ -5340,12 +5340,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     Navbar: _common_Navbar_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     TopBar: _common_TopBar_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  methods: {
+    logout: function logout() {
+      $(".dismissButton").click();
+      this.$store.commit("clearToken");
+      this.$router.push({
+        name: "login"
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Logout Successfull"
+      });
+    }
   }
 });
 
@@ -5605,6 +5619,10 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
+  // MOUNTED
+  mounted: function mounted() {
+    this.$store.commit("redirectHome");
+  },
   // METHODS
   methods: {
     signUp: function signUp() {
@@ -5682,6 +5700,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {
     this.$store.commit("checkAuth");
@@ -5701,6 +5722,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _navLinks_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./navLinks.js */ "./resources/js/components/common/navLinks.js");
 //
 //
 //
@@ -5758,14 +5780,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      links: _navLinks_js__WEBPACK_IMPORTED_MODULE_0__["default"]
+    };
+  }
+});
 
 /***/ }),
 
@@ -5894,7 +5916,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ["userName"],
+  data: function data() {
+    return {
+      authName: this.userName,
+      avatar: "https://ui-avatars.com/api/?background=fff&color=000&font-size=0.6&name=" + this.userName
+    };
+  },
+  watch: {
+    userName: function userName() {
+      this.authName = this.userName;
+      this.avatar = "https://ui-avatars.com/api/?background=fff&color=000&font-size=0.6&name=" + this.userName;
+    }
+  }
+});
 
 /***/ }),
 
@@ -5976,6 +6015,40 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/components/common/navLinks.js":
+/*!****************************************************!*\
+  !*** ./resources/js/components/common/navLinks.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var navLinks = [{
+  icon: '<i class="fas fa-fw fa-tachometer-alt"></i>',
+  name: "Dashboard",
+  path: {
+    name: "dashboard"
+  }
+}, {
+  icon: '<i class="fas fa-fw fa-tachometer-alt"></i>',
+  name: "Jorimana",
+  path: {
+    name: "dashboard"
+  },
+  child: [{
+    name: "Add Jorimana",
+    path: {
+      name: "dashboard"
+    }
+  }]
+}];
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (navLinks);
+
+/***/ }),
+
 /***/ "./resources/js/router/router.js":
 /*!***************************************!*\
   !*** ./resources/js/router/router.js ***!
@@ -6045,7 +6118,8 @@ vue__WEBPACK_IMPORTED_MODULE_1__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_2_
 var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
   state: {
     url: "http://127.0.0.1:8000/",
-    token: localStorage.getItem("auth") || ""
+    token: localStorage.getItem("auth") || "",
+    auth: {}
   },
   mutations: {
     setToken: function setToken(state, token) {
@@ -6055,6 +6129,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     clearToken: function clearToken(state) {
       localStorage.removeItem("auth");
       state.token = "";
+      state.auth = "";
     },
     checkAuth: function checkAuth(state) {
       var _this = this;
@@ -6063,19 +6138,21 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
         axios.post(state.url + "api/auth/me", {
           token: state.token
         }).then(function (res) {
-          console.log("auth");
+          state.auth = res.data;
         })["catch"](function (err) {
           _this.commit("clearToken");
 
           _router_router_js__WEBPACK_IMPORTED_MODULE_0__["default"].push({
             name: "login"
           });
+          state.auth = "";
         });
       } else {
         _router_router_js__WEBPACK_IMPORTED_MODULE_0__["default"].push({
           name: "login"
         });
         this.commit("clearToken");
+        state.auth = "";
       }
     },
     redirectHome: function redirectHome(state) {
@@ -6096,9 +6173,6 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
           });
         });
       } else {
-        _router_router_js__WEBPACK_IMPORTED_MODULE_0__["default"].push({
-          name: "login"
-        });
         this.commit("clearToken");
       }
     }
@@ -33000,7 +33074,9 @@ var render = function () {
               "div",
               { attrs: { id: "content" } },
               [
-                _c("TopBar"),
+                _c("TopBar", {
+                  attrs: { userName: _vm.$store.state.auth.name },
+                }),
                 _vm._v(" "),
                 _c(
                   "div",
@@ -33008,7 +33084,73 @@ var render = function () {
                     staticClass: "container-fluid",
                     attrs: { id: "container-wrapper" },
                   },
-                  [_c("router-view"), _vm._v(" "), _vm._m(0)],
+                  [
+                    _c("router-view"),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "modal fade",
+                        attrs: {
+                          id: "logoutModal",
+                          tabindex: "-1",
+                          role: "dialog",
+                          "aria-labelledby": "exampleModalLabelLogout",
+                          "aria-hidden": "true",
+                        },
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "modal-dialog",
+                            attrs: { role: "document" },
+                          },
+                          [
+                            _c("div", { staticClass: "modal-content" }, [
+                              _vm._m(0),
+                              _vm._v(" "),
+                              _vm._m(1),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "modal-footer" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn btn-outline-primary dismissButton",
+                                    attrs: {
+                                      type: "button",
+                                      "data-dismiss": "modal",
+                                    },
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                        Cancel\n                                    "
+                                    ),
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "a",
+                                  {
+                                    staticClass: "btn btn-primary",
+                                    attrs: { href: "login.html" },
+                                    on: {
+                                      click: function ($event) {
+                                        $event.preventDefault()
+                                        return _vm.logout.apply(null, arguments)
+                                      },
+                                    },
+                                  },
+                                  [_vm._v("Logout")]
+                                ),
+                              ]),
+                            ]),
+                          ]
+                        ),
+                      ]
+                    ),
+                  ],
                   1
                 ),
               ],
@@ -33026,88 +33168,41 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "logoutModal",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "exampleModalLabelLogout",
-          "aria-hidden": "true",
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        {
+          staticClass: "modal-title",
+          attrs: { id: "exampleModalLabelLogout" },
         },
-      },
-      [
-        _c(
-          "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
-          [
-            _c("div", { staticClass: "modal-content" }, [
-              _c("div", { staticClass: "modal-header" }, [
-                _c(
-                  "h5",
-                  {
-                    staticClass: "modal-title",
-                    attrs: { id: "exampleModalLabelLogout" },
-                  },
-                  [
-                    _vm._v(
-                      "\n                                        Ohh No!\n                                    "
-                    ),
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "close",
-                    attrs: {
-                      type: "button",
-                      "data-dismiss": "modal",
-                      "aria-label": "Close",
-                    },
-                  },
-                  [
-                    _c("span", { attrs: { "aria-hidden": "true" } }, [
-                      _vm._v("×"),
-                    ]),
-                  ]
-                ),
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-body" }, [
-                _c("p", [_vm._v("Are you sure you want to logout?")]),
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-outline-primary",
-                    attrs: { type: "button", "data-dismiss": "modal" },
-                  },
-                  [
-                    _vm._v(
-                      "\n                                        Cancel\n                                    "
-                    ),
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "btn btn-primary",
-                    attrs: { href: "login.html" },
-                  },
-                  [_vm._v("Logout")]
-                ),
-              ]),
-            ]),
-          ]
-        ),
-      ]
-    )
+        [
+          _vm._v(
+            "\n                                        Ohh No!\n                                    "
+          ),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close",
+          },
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      ),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("p", [_vm._v("Are you sure you want to logout?")]),
+    ])
   },
 ]
 render._withStripped = true
@@ -33235,7 +33330,11 @@ var render = function () {
                             staticClass: "font-weight-bold small",
                             attrs: { to: { name: "register" } },
                           },
-                          [_vm._v("Create an Account!")]
+                          [
+                            _vm._v(
+                              "Create an Account!\n                                        "
+                            ),
+                          ]
                         ),
                       ],
                       1
@@ -33582,16 +33681,16 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", [
+    _c("h2", [
+      _vm._v("\n        Welcome to Dashbaord\n        "),
+      _c("span", { staticClass: "text-capitalize" }, [
+        _vm._v("Mr. " + _vm._s(_vm.$store.state.auth.name)),
+      ]),
+    ]),
+  ])
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("h2", [_vm._v("Welcome to Dashbaord")])])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -33614,157 +33713,118 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return (
+    this.$route.path == "/" || this.$route.path == "/register" ? false : true
+  )
+    ? _c("div", [
+        _c(
+          "ul",
+          {
+            staticClass: "navbar-nav sidebar sidebar-light accordion",
+            attrs: { id: "accordionSidebar" },
+          },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("hr", { staticClass: "sidebar-divider my-0" }),
+            _vm._v(" "),
+            _vm._l(_vm.links, function (link, index) {
+              return _c(
+                "li",
+                { key: index, staticClass: "nav-item" },
+                [
+                  _c(
+                    "router-link",
+                    {
+                      staticClass: "nav-link collapsed",
+                      attrs: {
+                        to: link.path || "#",
+                        "data-toggle": link.child ? "collapse" : null,
+                        "data-target": "#menu" + index,
+                        "aria-expanded": "true",
+                        "aria-controls": "collapseBootstrap",
+                      },
+                    },
+                    [
+                      _c("span", {
+                        domProps: { innerHTML: _vm._s(link.icon) },
+                      }),
+                      _vm._v(" "),
+                      _c("span", [_vm._v(_vm._s(link.name))]),
+                    ]
+                  ),
+                  _vm._v(" "),
+                  link.child
+                    ? _c(
+                        "div",
+                        {
+                          staticClass: "collapse",
+                          attrs: {
+                            id: "menu" + index,
+                            "aria-labelledby": "headingBootstrap",
+                            "data-parent": "#accordionSidebar",
+                          },
+                        },
+                        _vm._l(link.child, function (child, id) {
+                          return _c(
+                            "div",
+                            {
+                              key: id,
+                              staticClass:
+                                "bg-white py-2 collapse-inner rounded",
+                            },
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "collapse-item",
+                                  attrs: { to: child.path },
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                        " +
+                                      _vm._s(child.name) +
+                                      "\n                    "
+                                  ),
+                                ]
+                              ),
+                            ],
+                            1
+                          )
+                        }),
+                        0
+                      )
+                    : _vm._e(),
+                ],
+                1
+              )
+            }),
+          ],
+          2
+        ),
+      ])
+    : _vm._e()
 }
 var staticRenderFns = [
   function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
-      _c(
-        "ul",
-        {
-          staticClass: "navbar-nav sidebar sidebar-light accordion",
-          attrs: { id: "accordionSidebar" },
-        },
-        [
-          _c(
-            "a",
-            {
-              staticClass:
-                "sidebar-brand d-flex align-items-center justify-content-center",
-              attrs: { href: "/" },
-            },
-            [
-              _c("div", { staticClass: "sidebar-brand-icon" }, [
-                _c("img", { attrs: { src: "/backend/img/logo/logo2.png" } }),
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "sidebar-brand-text mx-3" }, [
-                _vm._v("JMS"),
-              ]),
-            ]
-          ),
-          _vm._v(" "),
-          _c("hr", { staticClass: "sidebar-divider my-0" }),
-          _vm._v(" "),
-          _c("li", { staticClass: "nav-item" }, [
-            _c(
-              "a",
-              { staticClass: "nav-link", attrs: { href: "index.html" } },
-              [
-                _c("i", { staticClass: "fas fa-fw fa-tachometer-alt" }),
-                _vm._v(" "),
-                _c("span", [_vm._v("Dashboard")]),
-              ]
-            ),
-          ]),
-          _vm._v(" "),
-          _c("hr", { staticClass: "sidebar-divider" }),
-          _vm._v(" "),
-          _c("div", { staticClass: "sidebar-heading" }, [_vm._v("Features")]),
-          _vm._v(" "),
-          _c("li", { staticClass: "nav-item" }, [
-            _c(
-              "a",
-              {
-                staticClass: "nav-link collapsed",
-                attrs: {
-                  href: "#",
-                  "data-toggle": "collapse",
-                  "data-target": "#collapseBootstrap",
-                  "aria-expanded": "true",
-                  "aria-controls": "collapseBootstrap",
-                },
-              },
-              [
-                _c("i", { staticClass: "far fa-fw fa-window-maximize" }),
-                _vm._v(" "),
-                _c("span", [_vm._v("Bootstrap UI")]),
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse",
-                attrs: {
-                  id: "collapseBootstrap",
-                  "aria-labelledby": "headingBootstrap",
-                  "data-parent": "#accordionSidebar",
-                },
-              },
-              [
-                _c(
-                  "div",
-                  { staticClass: "bg-white py-2 collapse-inner rounded" },
-                  [
-                    _c("h6", { staticClass: "collapse-header" }, [
-                      _vm._v("Bootstrap UI"),
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "collapse-item",
-                        attrs: { href: "alerts.html" },
-                      },
-                      [_vm._v("Alerts")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "collapse-item",
-                        attrs: { href: "buttons.html" },
-                      },
-                      [_vm._v("Buttons")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "collapse-item",
-                        attrs: { href: "dropdowns.html" },
-                      },
-                      [_vm._v("Dropdowns")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "collapse-item",
-                        attrs: { href: "modals.html" },
-                      },
-                      [_vm._v("Modals")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "collapse-item",
-                        attrs: { href: "popovers.html" },
-                      },
-                      [_vm._v("Popovers")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "collapse-item",
-                        attrs: { href: "progress-bar.html" },
-                      },
-                      [_vm._v("Progress Bars")]
-                    ),
-                  ]
-                ),
-              ]
-            ),
-          ]),
-        ]
-      ),
-    ])
+    return _c(
+      "a",
+      {
+        staticClass:
+          "sidebar-brand d-flex align-items-center justify-content-center",
+        attrs: { href: "/" },
+      },
+      [
+        _c("div", { staticClass: "sidebar-brand-icon" }, [
+          _c("img", { attrs: { src: "/backend/img/logo/logo2.png" } }),
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "sidebar-brand-text mx-3" }, [_vm._v("JMS")]),
+      ]
+    )
   },
 ]
 render._withStripped = true
@@ -33789,197 +33849,189 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return (
+    this.$route.path == "/" || this.$route.path == "/register" ? false : true
+  )
+    ? _c("div", [
+        _c(
+          "nav",
+          {
+            staticClass:
+              "navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top",
+          },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("ul", { staticClass: "navbar-nav ml-auto" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "topbar-divider d-none d-sm-block" }),
+              _vm._v(" "),
+              _c("li", { staticClass: "nav-item dropdown no-arrow" }, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "nav-link dropdown-toggle",
+                    attrs: {
+                      href: "#",
+                      id: "userDropdown",
+                      role: "button",
+                      "data-toggle": "dropdown",
+                      "aria-haspopup": "true",
+                      "aria-expanded": "false",
+                    },
+                  },
+                  [
+                    _c("img", {
+                      staticClass: "img-profile rounded-circle",
+                      staticStyle: { "max-width": "60px" },
+                      attrs: { src: _vm.avatar },
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass:
+                          "ml-2 d-none d-lg-inline text-white small text-capitalize",
+                      },
+                      [_vm._v(_vm._s(_vm.userName) + "\n                    ")]
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _vm._m(2),
+              ]),
+            ]),
+          ]
+        ),
+      ])
+    : _vm._e()
 }
 var staticRenderFns = [
   function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-link rounded-circle mr-3",
+        attrs: { id: "sidebarToggleTop" },
+      },
+      [_c("i", { staticClass: "fa fa-bars" })]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "nav-item dropdown no-arrow" }, [
       _c(
-        "nav",
+        "a",
+        {
+          staticClass: "nav-link dropdown-toggle",
+          attrs: {
+            href: "#",
+            id: "searchDropdown",
+            role: "button",
+            "data-toggle": "dropdown",
+            "aria-haspopup": "true",
+            "aria-expanded": "false",
+          },
+        },
+        [_c("i", { staticClass: "fas fa-search fa-fw" })]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
         {
           staticClass:
-            "navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top",
+            "dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in",
+          attrs: { "aria-labelledby": "searchDropdown" },
         },
         [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-link rounded-circle mr-3",
-              attrs: { id: "sidebarToggleTop" },
-            },
-            [_c("i", { staticClass: "fa fa-bars" })]
-          ),
-          _vm._v(" "),
-          _c("ul", { staticClass: "navbar-nav ml-auto" }, [
-            _c("li", { staticClass: "nav-item dropdown no-arrow" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "nav-link dropdown-toggle",
-                  attrs: {
-                    href: "#",
-                    id: "searchDropdown",
-                    role: "button",
-                    "data-toggle": "dropdown",
-                    "aria-haspopup": "true",
-                    "aria-expanded": "false",
-                  },
+          _c("form", { staticClass: "navbar-search" }, [
+            _c("div", { staticClass: "input-group" }, [
+              _c("input", {
+                staticClass: "form-control bg-light border-1 small",
+                staticStyle: { "border-color": "#3f51b5" },
+                attrs: {
+                  type: "text",
+                  placeholder: "What do you want to look for?",
+                  "aria-label": "Search",
+                  "aria-describedby": "basic-addon2",
                 },
-                [_c("i", { staticClass: "fas fa-search fa-fw" })]
-              ),
+              }),
               _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in",
-                  attrs: { "aria-labelledby": "searchDropdown" },
-                },
-                [
-                  _c("form", { staticClass: "navbar-search" }, [
-                    _c("div", { staticClass: "input-group" }, [
-                      _c("input", {
-                        staticClass: "form-control bg-light border-1 small",
-                        staticStyle: { "border-color": "#3f51b5" },
-                        attrs: {
-                          type: "text",
-                          placeholder: "What do you want to look for?",
-                          "aria-label": "Search",
-                          "aria-describedby": "basic-addon2",
-                        },
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "input-group-append" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            attrs: { type: "button" },
-                          },
-                          [_c("i", { staticClass: "fas fa-search fa-sm" })]
-                        ),
-                      ]),
-                    ]),
-                  ]),
-                ]
-              ),
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "topbar-divider d-none d-sm-block" }),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item dropdown no-arrow" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "nav-link dropdown-toggle",
-                  attrs: {
-                    href: "#",
-                    id: "userDropdown",
-                    role: "button",
-                    "data-toggle": "dropdown",
-                    "aria-haspopup": "true",
-                    "aria-expanded": "false",
-                  },
-                },
-                [
-                  _c("img", {
-                    staticClass: "img-profile rounded-circle",
-                    staticStyle: { "max-width": "60px" },
-                    attrs: {
-                      src: "https://ui-avatars.com/api/?background=fff&color=000&font-size=0.6&name=abul+faisal",
-                    },
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "span",
-                    { staticClass: "ml-2 d-none d-lg-inline text-white small" },
-                    [_vm._v("Maman Ketoprak")]
-                  ),
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "dropdown-menu dropdown-menu-right shadow animated--grow-in",
-                  attrs: { "aria-labelledby": "userDropdown" },
-                },
-                [
-                  _c(
-                    "a",
-                    { staticClass: "dropdown-item", attrs: { href: "#" } },
-                    [
-                      _c("i", {
-                        staticClass:
-                          "fas fa-user fa-sm fa-fw mr-2 text-gray-400",
-                      }),
-                      _vm._v(
-                        "\n                        Profile\n                    "
-                      ),
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "dropdown-item", attrs: { href: "#" } },
-                    [
-                      _c("i", {
-                        staticClass:
-                          "fas fa-cogs fa-sm fa-fw mr-2 text-gray-400",
-                      }),
-                      _vm._v(
-                        "\n                        Settings\n                    "
-                      ),
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "dropdown-item", attrs: { href: "#" } },
-                    [
-                      _c("i", {
-                        staticClass:
-                          "fas fa-list fa-sm fa-fw mr-2 text-gray-400",
-                      }),
-                      _vm._v(
-                        "\n                        Activity Log\n                    "
-                      ),
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "dropdown-divider" }),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      staticClass: "dropdown-item",
-                      attrs: {
-                        href: "javascript:void(0);",
-                        "data-toggle": "modal",
-                        "data-target": "#logoutModal",
-                      },
-                    },
-                    [
-                      _c("i", {
-                        staticClass:
-                          "fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400",
-                      }),
-                      _vm._v(
-                        "\n                        Logout\n                    "
-                      ),
-                    ]
-                  ),
-                ]
-              ),
+              _c("div", { staticClass: "input-group-append" }, [
+                _c(
+                  "button",
+                  { staticClass: "btn btn-primary", attrs: { type: "button" } },
+                  [_c("i", { staticClass: "fas fa-search fa-sm" })]
+                ),
+              ]),
             ]),
           ]),
         ]
       ),
     ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass:
+          "dropdown-menu dropdown-menu-right shadow animated--grow-in",
+        attrs: { "aria-labelledby": "userDropdown" },
+      },
+      [
+        _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
+          _c("i", {
+            staticClass: "fas fa-user fa-sm fa-fw mr-2 text-gray-400",
+          }),
+          _vm._v("\n                        Profile\n                    "),
+        ]),
+        _vm._v(" "),
+        _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
+          _c("i", {
+            staticClass: "fas fa-cogs fa-sm fa-fw mr-2 text-gray-400",
+          }),
+          _vm._v("\n                        Settings\n                    "),
+        ]),
+        _vm._v(" "),
+        _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
+          _c("i", {
+            staticClass: "fas fa-list fa-sm fa-fw mr-2 text-gray-400",
+          }),
+          _vm._v(
+            "\n                        Activity Log\n                    "
+          ),
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "dropdown-divider" }),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            staticClass: "dropdown-item",
+            attrs: {
+              href: "javascript:void(0);",
+              "data-toggle": "modal",
+              "data-target": "#logoutModal",
+            },
+          },
+          [
+            _c("i", {
+              staticClass: "fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400",
+            }),
+            _vm._v("\n                        Logout\n                    "),
+          ]
+        ),
+      ]
+    )
   },
 ]
 render._withStripped = true
@@ -50585,7 +50637,7 @@ var index = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"Promise based HTTP client for the browser and node.js","main":"index.js","scripts":{"test":"grunt test","start":"node ./sandbox/server.js","build":"NODE_ENV=production grunt build","preversion":"npm test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json","postversion":"git push && git push --tags","examples":"node ./examples/server.js","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","fix":"eslint --fix lib/**/*.js"},"repository":{"type":"git","url":"https://github.com/axios/axios.git"},"keywords":["xhr","http","ajax","promise","node"],"author":"Matt Zabriskie","license":"MIT","bugs":{"url":"https://github.com/axios/axios/issues"},"homepage":"https://axios-http.com","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"jsdelivr":"dist/axios.min.js","unpkg":"dist/axios.min.js","typings":"./index.d.ts","dependencies":{"follow-redirects":"^1.14.0"},"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}]}');
+module.exports = JSON.parse('{"_args":[["axios@0.21.4","C:\\\\Users\\\\USER\\\\Desktop\\\\Vue js Projects\\\\jorimanaManagementSystem"]],"_development":true,"_from":"axios@0.21.4","_id":"axios@0.21.4","_inBundle":false,"_integrity":"sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==","_location":"/axios","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"axios@0.21.4","name":"axios","escapedName":"axios","rawSpec":"0.21.4","saveSpec":null,"fetchSpec":"0.21.4"},"_requiredBy":["#DEV:/"],"_resolved":"https://registry.npmjs.org/axios/-/axios-0.21.4.tgz","_spec":"0.21.4","_where":"C:\\\\Users\\\\USER\\\\Desktop\\\\Vue js Projects\\\\jorimanaManagementSystem","author":{"name":"Matt Zabriskie"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"bugs":{"url":"https://github.com/axios/axios/issues"},"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}],"dependencies":{"follow-redirects":"^1.14.0"},"description":"Promise based HTTP client for the browser and node.js","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"homepage":"https://axios-http.com","jsdelivr":"dist/axios.min.js","keywords":["xhr","http","ajax","promise","node"],"license":"MIT","main":"index.js","name":"axios","repository":{"type":"git","url":"git+https://github.com/axios/axios.git"},"scripts":{"build":"NODE_ENV=production grunt build","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","examples":"node ./examples/server.js","fix":"eslint --fix lib/**/*.js","postversion":"git push && git push --tags","preversion":"npm test","start":"node ./sandbox/server.js","test":"grunt test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json"},"typings":"./index.d.ts","unpkg":"dist/axios.min.js","version":"0.21.4"}');
 
 /***/ })
 

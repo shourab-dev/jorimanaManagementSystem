@@ -1,6 +1,9 @@
 <template>
     <div>
-        <h2>Welcome to Dashbaord</h2>
+        <h2>
+            Welcome to Dashbaord
+            <span class="text-capitalize">Mr. {{ $store.state.auth.name }}</span>
+        </h2>
     </div>
 </template>
 
