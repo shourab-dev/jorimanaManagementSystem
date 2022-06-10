@@ -6,12 +6,12 @@ const navLinks = [
     },
     {
         icon: '<i class="fas fa-fw fa-tachometer-alt"></i>',
-        name: "Jorimana",
-        path: { name: "dashboard" },
+        name: "Batch & Jorimana",
+        path: '#',
         child: [
             {
-                name: "Add Jorimana",
-                path: { name: "dashboard" },
+                name: "Add Batch",
+                path: { name: "batch" },
             },
         ],
     },

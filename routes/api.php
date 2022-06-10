@@ -3,9 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BatchController;
 
 Route::group([
-
     'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix' => 'auth'
@@ -17,4 +17,9 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+
+
+    // BATCHES
+    Route::post('/batch', [BatchController::class, 'store']);
+    Route::get('/all', [BatchController::class, 'index']);
 });
