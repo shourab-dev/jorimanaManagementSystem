@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "laravel-vue-pagination": "^2.0.0",
+        "moment": "^2.29.3",
         "sweetalert2": "^11.4.17"
     }
 }

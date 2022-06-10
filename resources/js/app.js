@@ -5,7 +5,12 @@ window.Vue = require("vue").default;
 import router from "./router/router.js";
 import store from "./store/store.js";
 
+// MOMENT JS FOR DATA & TIME FORMAT
+const moment = require("moment");
+window.moment = moment;
+// MOMENT JS FOR DATA & TIME FORMAT
 // SWEET ALERT 2
+
 import Swal from "sweetalert2";
 window.Swal = Swal;
 

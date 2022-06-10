@@ -40,12 +40,13 @@
                     aria-labelledby="headingBootstrap"
                     data-parent="#accordionSidebar"
                 >
-                    <div
-                        class="bg-white py-2 collapse-inner rounded"
-                        v-for="(child, id) in link.child"
-                        :key="id"
-                    >
-                        <router-link class="collapse-item" :to="child.path">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <router-link
+                            class="collapse-item"
+                            :to="child.path"
+                            v-for="(child, id) in link.child"
+                            :key="id"
+                        >
                             {{ child.name }}
                         </router-link>
                     </div>
