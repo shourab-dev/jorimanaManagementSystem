@@ -13,6 +13,7 @@ const navLinks = [
                 name: "Add Batch",
                 path: { name: "batch" },
             },
+            
         ],
     },
 ];
