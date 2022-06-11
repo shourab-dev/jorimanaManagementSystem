@@ -28,6 +28,12 @@ class BatchController extends Controller
         return response()->json($batch);
     }
 
+    public function allBatch(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $batches  = Batch::where('user_id', $user->id)->latest()->select('id','user_id', 'name')->toBase()->get();
+        return response()->json($batches);
+    }
 
 
     public function index(Request $request)
@@ -39,9 +45,9 @@ class BatchController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'value.name' => 'required|unique:batches,name'
+            'value.name' => 'required|unique:batches,name,' . $request->value['id'],
         ]);
-        
+
         $batch = Batch::find($request->value['id']);
         $batch->name = $request->value['name'];
         $batch->save();

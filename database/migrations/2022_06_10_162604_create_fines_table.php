@@ -19,6 +19,7 @@ class CreateFinesTable extends Migration
             $table->foreignId('batch_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('name');
             $table->integer('amount');
+            $table->boolean('ispaid')->default(false);
             $table->timestamps();
         });
     }

@@ -12,6 +12,7 @@ class Fine extends Model
         'user_id',
         'batch_id',
         'name',
-        'amount'
+        'amount',
+        'ispaid'
     ];
 }

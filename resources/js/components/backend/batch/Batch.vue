@@ -14,7 +14,7 @@
         </div>
 
         <!-- ALL DATA -->
-        <div class="table-responsive mt-5" v-if="lists.data.length > 0">
+        <div class="table-responsive mt-5" v-if="lists.data != 0">
             <table class="table">
                 <tr class="bg-primary text-white">
                     <th>#</th>

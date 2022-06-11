@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Fine;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Batch extends Model
 {
@@ -17,5 +18,10 @@ class Batch extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function fines()
+    {
+        return $this->hasMany(Fine::class);
     }
 }
