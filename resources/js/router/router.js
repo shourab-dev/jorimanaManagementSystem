@@ -13,7 +13,7 @@ import Dashboard from "../components/backend/Dashboard.vue";
 
 // BATCH
 import Batch from "../components/backend/batch/Batch.vue";
-
+import Fines from "../components/backend/fine/AllFines.vue";
 // import section ends
 
 const routes = [
@@ -36,6 +36,11 @@ const routes = [
         path: "/dashboard/batch",
         name: "batch",
         component: Batch,
+    },
+    {
+        path: "/dashboard/fines",
+        name: "fines",
+        component: Fines,
     },
 ];
 

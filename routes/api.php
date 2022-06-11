@@ -22,4 +22,6 @@ Route::group([
     // BATCHES
     Route::post('/batch', [BatchController::class, 'store']);
     Route::get('/all', [BatchController::class, 'index']);
+    Route::put('/batch/update', [BatchController::class, 'update']);
+    Route::delete('/batch/delete', [BatchController::class, 'destroy']);
 });
