@@ -29,11 +29,47 @@ class FineController extends Controller
         }
         return response()->json(200);
     }
+
+
     public function batchesFine(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        return Batch::with(['fines' => function ($q) {
-            $q->where('ispaid', 1)->sum('amount');
-        }])->where('user_id', $user->id)->get();
+        return Batch::select('id', 'name', 'status')->withSum(['fines as collectFines' => function ($q) {
+            $q->where('ispaid', true);
+        }], 'amount')->withSum('fines as totalFines', 'amount')->where('status', true)->where('user_id', $user->id)->latest()->paginate(5);
+    }
+
+
+
+    public function batchWiseFine(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $batchId = $request->header('id');
+        $allName = Fine::where('user_id', $user->id)->where('batch_id', $batchId)->select('name', 'batch_id')->distinct()->get()->toArray();
+        $batch = Batch::find($batchId, ['id', 'name']);
+        // $fineList = Fine::where('user_id', $user->id)->where('batch_id', $batchId)->get()->groupBy('name');
+        return response()->json(['batch' => $batch, 'list' => $allName]);
+    }
+
+
+    public function studentFine(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $fine =  Fine::where('user_id', $user->id)->where('batch_id', $request->batchId)->where('name', $request->name)->select('id', 'amount', 'ispaid')->get();
+        return response()->json($fine);
+    }
+
+    public function fineUpdate(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $id =  $request->fineId;
+        $fine = Fine::find($id);
+        if ($fine->ispaid == 1) {
+            $fine->ispaid = 0;
+        } else {
+            $fine->ispaid = 1;
+        }
+        $fine->save();
+        return response()->json($fine);
     }
 }

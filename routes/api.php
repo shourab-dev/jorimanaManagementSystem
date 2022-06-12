@@ -30,4 +30,7 @@ Route::group([
     // FINES
     Route::post('/store-fines', [FineController::class, 'store']);
     Route::GET('/batch-fine', [FineController::class, 'batchesFine']);
+    Route::GET('/batch/fine/info', [FineController::class, 'batchWiseFine']);
+    Route::post('/student-fine', [FineController::class, 'studentFine']);
+    Route::PUT('/student-fine/update', [FineController::class, 'fineUpdate']);
 });

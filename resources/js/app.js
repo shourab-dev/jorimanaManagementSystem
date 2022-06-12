@@ -8,6 +8,7 @@ import store from "./store/store.js";
 // MOMENT JS FOR DATA & TIME FORMAT
 const moment = require("moment");
 window.moment = moment;
+
 // MOMENT JS FOR DATA & TIME FORMAT
 // SWEET ALERT 2
 

@@ -27,10 +27,13 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <script src="{{ asset('js/app.js') }}"></script>
-
+    <script
+        src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js">
+    </script>
     <script src="{{ asset('backend/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('backend/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('backend/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
     <script src="{{ asset('backend/js/ruang-admin.min.js') }}"></script>
 </body>
 

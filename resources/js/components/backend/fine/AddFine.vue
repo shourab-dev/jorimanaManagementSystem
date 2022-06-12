@@ -174,7 +174,12 @@ export default {
                 })
                 .then((res) => {
                     this.$emit("refreshBatch");
+
                     this.hideModal();
+                    Toast.fire({
+                        icon: "success",
+                        title: `Successfully Added`,
+                    });
                     this.forms.splice(1, this.forms.length);
                     this.forms = [
                         {
